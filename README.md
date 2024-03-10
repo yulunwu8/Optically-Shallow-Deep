@@ -1,8 +1,9 @@
 # Optically-Shallow-Deep 
 
-Package name: opticallyshallowdeep
+This python tool delineates optically shallow and deep waters in Sentinel-2 imagery. The tool uses a deep neural network that was trained on a diverse set of global images.
 
-Usage: import opticallyshallowdeep as osd
+Supported input includes L1C files and ACOLITE-processed L2R files. The output geotiff contains probabilities of water pixels being optically shallow and deep. 
+
 
 Written by Galen Richardson, modified and uploaded by Yulun Wu
 
