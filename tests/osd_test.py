@@ -8,7 +8,18 @@ sys.path.append(two_up)
 import opticallyshallowdeep as osd
 
 
-osd.run()
+
+
+
+file_in = '/Users/yw/Local_storage/temp_OSD_test/S2B_MSIL1C_20210902T015619_N0301_R117_T51KWB_20210902T033620.SAFE'
+file_out = '/Users/yw/Local_storage/temp_OSD_test/temp_out'
+
+
+osd.run(file_in,file_out)
+
+
+
+
 
 
 

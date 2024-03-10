@@ -11,7 +11,9 @@ setup(
     description='Identify optically shallow and deep waters in satellite imagery',
     long_description=long_description,      # Long description read from the the readme file
     long_description_content_type="text/markdown",
-    packages=find_packages(),
+    # packages=find_packages(),
+    packages=['opticallyshallowdeep','opticallyshallowdeep.models'],
+    include_package_data=True,
     classifiers=[
         'Programming Language :: Python :: 3'
     ],
