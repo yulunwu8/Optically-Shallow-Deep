@@ -11,14 +11,14 @@ Originally coded by by Galen Richardson and Anders Knudby, modified and uploaded
  
 ## Installation 
 
-1 - Create a conda environment and activate it: 
+**1 - Create a conda environment and activate it:**
 
 ```bash
 conda create --name opticallyshallowdeep
 conda activate opticallyshallowdeep
 ```
 
-2 - Install tensorflow 
+**2 - Install tensorflow**
 
 For mac OS: 
 
@@ -50,14 +50,14 @@ python3 -m pip install tensorflow
 More on installing tensorflow: [https://www.tensorflow.org/install](https://www.tensorflow.org/install)
 
 
-3 - Install other dependencies: 
+**3 - Install other dependencies:**
 
 ```bash
 conda install -c conda-forge geopandas rasterio
 ```
 
 
-4 - Install opticallyshallowdeep: 
+**4 - Install opticallyshallowdeep:**
 
 ```bash
 pip3 install opticallyshallowdeep
