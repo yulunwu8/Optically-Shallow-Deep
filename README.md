@@ -60,7 +60,7 @@ conda install -c conda-forge geopandas rasterio
 **4 - Install opticallyshallowdeep:**
 
 ```bash
-pip3 install opticallyshallowdeep
+python3 -m pip install opticallyshallowdeep
 ```
 
 
