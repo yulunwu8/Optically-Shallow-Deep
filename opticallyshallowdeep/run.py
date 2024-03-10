@@ -34,6 +34,12 @@ def run(file_in,file_out):
     # copy files to a new path??? Why 
     
     
+    ### Seems to be editing B02 file, make a copy first 
+    
+    
+    
+    
+    
     # make multiband_image (should include ACOLITE NetCDF as input) !!! 
     
     
