@@ -53,7 +53,7 @@ More on installing tensorflow: [https://www.tensorflow.org/install](https://www.
 **3 - Install other dependencies:**
 
 ```bash
-conda install -c conda-forge geopandas rasterio
+conda install -c conda-forge geopandas rasterio tifffile 
 ```
 
 

@@ -12,10 +12,10 @@ import opticallyshallowdeep as osd
 
 
 file_in = '/Users/yw/Local_storage/temp_OSD_test/S2B_MSIL1C_20210902T015619_N0301_R117_T51KWB_20210902T033620.SAFE'
-file_out = '/Users/yw/Local_storage/temp_OSD_test/temp_out'
+folder_out = '/Users/yw/Local_storage/temp_OSD_test/temp_out'
 
 
-osd.run(file_in,file_out)
+osd.run(file_in,folder_out)
 
 
 
