@@ -1,7 +1,4 @@
 
-
-
-
 def check_transpose(img):
     #if the #of bands is greater than the number of x or y cords
     y,x,b=img.shape 

@@ -1,17 +1,10 @@
-
-
 import numpy as np
 import os
 import glob
 import rasterio
 import gc
 
-
-### This is for TOA, make SR!!! 
-
-
-#make multiband images in output dir
-
+# make multiband images in output dir
 def make_multiband_image(file_in,folder_out):
 
     print("Processing {}".format(file_in))
@@ -20,7 +13,6 @@ def make_multiband_image(file_in,folder_out):
     
     # output path
     imageFile = os.path.join(folder_out,basename) + '.tif'
-    
     
     if not os.path.exists(imageFile):
         band_numbers = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B08', 'B8A', 'B11', 'B12']
@@ -59,15 +51,5 @@ def make_multiband_image(file_in,folder_out):
         gc.collect()
 
     return imageFile
-
-
-
-
-
-
-
-
-
-
 
 

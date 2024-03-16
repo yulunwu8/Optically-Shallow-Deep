@@ -1,9 +1,6 @@
 
 
-
-
 def find_epsg(data):
-    
     
     # Use regex to extract the desired part
     import re
@@ -20,12 +17,8 @@ def find_epsg(data):
     
     extracted_text
     
-    
     # Define the CRS name
-    # crs_name = "WGS 84 / UTM zone 15N"
-    
     crs_name = "WGS 84 / " + str(extracted_text)
-    
     
     try:
         # Use pyproj to find the CRS object from the given CRS name

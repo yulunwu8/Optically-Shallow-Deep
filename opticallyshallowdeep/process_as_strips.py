@@ -1,32 +1,29 @@
 
-import os, gc, warnings
+import os, gc, warnings, math
 import numpy as np
 import pandas as pd
-from joblib import Parallel, delayed
+import netCDF4 as nc4
+import warnings
 
+from joblib import Parallel, delayed
 from datetime import datetime
 
 import scipy
-
 from scipy import ndimage
-
 from scipy.ndimage import uniform_filter
-from scipy.ndimage import binary_dilation
-import math
+from scipy.ndimage import binary_dilation 
 
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Dense
 from tensorflow.keras.models import Model,load_model
 
-
-
-def process_as_strips (full_img, image_path, if_SR, model_path, selected_columns, model_columns):
+def process_as_strips (full_img, image_path, if_SR, model_path, selected_columns, model_columns, file_in):
     strip1, strip2, strip3, strip4,strip5=make_vertical_strips(full_img) #create strips with overlap
     striplist=[strip1, strip2, strip3, strip4,strip5] #make strip list
     RGBlist=[]
     for n in range(len(striplist)):
         print(" Strip {}".format(n+1))
-        strip_p=process_img_to_rgb(striplist[n],image_path, if_SR, model_path, selected_columns, model_columns) #output is RGB of image
+        strip_p=process_img_to_rgb(striplist[n],image_path, if_SR, model_path, selected_columns, model_columns, file_in) #output is RGB of image
         RGBlist.append(strip_p) #append processed strip to RGB list
     RGB_img=join_vertical_strips(RGBlist[0], RGBlist[1], RGBlist[2], RGBlist[3],RGBlist[4])
     plot_RGB_img(RGB_img) #show the final image
@@ -45,8 +42,8 @@ def make_vertical_strips(full_img):
     strip5 = full_img[:, 4*width//5:width, :]# no overlap
     return strip1,strip2,strip3,strip4,strip5
 
-def process_img_to_rgb(img,file_path, if_SR, model_path, selected_columns, model_columns):
-    img,img_name,correction=correct_baseline(img,file_path, if_SR)#used on slices or whole images
+def process_img_to_rgb(img,file_path, if_SR, model_path, selected_columns, model_columns, file_in):
+    img,img_name,correction=correct_baseline(img,file_path, if_SR, file_in)#used on slices or whole images
     final_cord=get_water_pix_coord(img,correction, if_SR) #getting coordinates of water pixels
     if len(final_cord)==0:
         RGB_img=make_blank_img(img)
@@ -54,7 +51,6 @@ def process_img_to_rgb(img,file_path, if_SR, model_path, selected_columns, model
     else:
         # print("  {} {} Coordinates of non-glinty water pixels".format(time_tracker(start_time),len(final_cord)))
         print("  {} Coordinates of non-glinty water pixels".format(len(final_cord)))
-        
         
         filter_image = process_image_with_filters(img, selected_columns) #creating a filter image to extract values from
         edge_nodata_list = select_edge_and_buffer_no_data_pixels (img,correction, if_SR) #selecting pixels for slow processing
@@ -71,42 +67,52 @@ def process_img_to_rgb(img,file_path, if_SR, model_path, selected_columns, model
         return RGB_img #this image is 0: OSW/ODW, 1:pred/prob, 2: Mask
 
 
-def correct_baseline(img,file_path, if_SR):
+def correct_baseline(img,file_path, if_SR, file_in):
     
     from xml.dom import minidom
     
-    file_name = os.path.basename(file_path)
-    img_name, date = file_name[39:44], file_name[45:53]# img name,processing date
-    safe_path = file_path[:-4] + '.SAFE'
-    Processing_baseline_4_date = '20220125'# otherwise, look for processing data and if it is after then adjust (acolite false)
-    extracted_date, given_date = datetime.strptime(date, '%Y%m%d'), datetime.strptime(Processing_baseline_4_date, '%Y%m%d')
-    correction=False
-    def Add_1000(img):
-        return img + 1000 #function for parallization in this function
-    if if_SR == False:
-        if extracted_date < given_date:
-            correction=True #if earlier than baseline4, need to add 1000 as per our model
-    tdom=[0,1]
-    if os.path.exists(safe_path + '\\MTD_MSIL1C.xml'):
-        xml = minidom.parse(safe_path + '\\MTD_MSIL1C.xml')#look at xml for correction first
-        tdom = xml.getElementsByTagName('RADIO_ADD_OFFSET')#if this tag exists it is after baseline 4
-    if len(tdom) == 0 or correction==True:
-        chunk_size = len(img) // 4 #split into 4 for four cores, apply correction this way
-        chunks = [img[i:i + chunk_size] for i in range(0, len(img), chunk_size)]
-        imgf = np.concatenate(Parallel(n_jobs=4)(delayed(Add_1000)(chunk) for chunk in chunks), axis=0)
-        correction=1000
-        '''Correction is a very important variable, since in some of the images we need to add 1000 in order to
-        correct for baseline 4. In these instances, 0 becomes 1000. There are times where we need to mask out 0 pixels
-        or avoid 0, so we use correction as a variable for pixels that are originally 0'''
-        print('  Adjusted pixel value')
-        del chunks
-    else:
+    # if ACOLITE input 
+    if if_SR:
+        
+        # Open the NetCDF file
+        with nc4.Dataset(file_in, "r") as nc:
+            tile_code = nc.getncattr('tile_code')
+            img_name = tile_code[1:]
+            
         imgf = img
-        correction=0
+        correction = 0
+        
+    # if L1C input 
+    else:
+        xml_path = os.path.join(file_in,'MTD_MSIL1C.xml')
+        xml = minidom.parse(xml_path)#look at xml for correction first
+        tdom = xml.getElementsByTagName('RADIO_ADD_OFFSET')#if this tag exists it is after baseline 4
+        
+        # If no RADIO_ADD_OFFSET
+        if len(tdom) == 0: 
+            
+            def Add_1000(img):
+                return img + 1000 #function for parallization in this function
+        
+            chunk_size = len(img) // 4 #split into 4 for four cores, apply correction this way
+            chunks = [img[i:i + chunk_size] for i in range(0, len(img), chunk_size)]
+            imgf = np.concatenate(Parallel(n_jobs=4)(delayed(Add_1000)(chunk) for chunk in chunks), axis=0)
+            correction = 1000
+            
+            '''Correction is a very important variable, since in some of the images we need to add 1000 in order to
+            correct for baseline 4. In these instances, 0 becomes 1000. There are times where we need to mask out 0 pixels
+            or avoid 0, so we use correction as a variable for pixels that are originally 0'''
+            print('  Adjusted pixel value for before Baseline 4 processing')
+            del chunks
+        
+        # If there is RADIO_ADD_OFFSET
+        else:
+            imgf = img
+            correction = 0
+
     del img
-    return imgf, img_name,correction
-
-
+    return imgf, img_name, correction
+    
 def get_water_pix_coord(img,correction, if_SR):
     #creates the mask of what is water by using Glint threshold, NDWI, NDSI...
     if if_SR == False:
@@ -130,12 +136,16 @@ def get_water_pix_coord(img,correction, if_SR):
     coordinate_list_NDSI = list(zip(ndsir,ndsic))
     del b3,b11,NDSI,coordinates_NDSI,ndsir,ndsic
     gc.collect()
+    
+    # L1C
     if if_SR == False:
         ND_coordinates = np.column_stack(np.where(np.all((img > correction) & (img < 30000), axis=-1)))#where not no data (in any band)
         ND_coordinates_list = list(map(tuple, ND_coordinates))
         common_coordinates_set = set(glint_coordinates_list) & set(ND_coordinates_list)& set(coordinate_list_NDWI)& set(coordinate_list_NDSI)
         common_coordinates_list = list(common_coordinates_set)  # Convert set to list
         del ND_coordinates,ND_coordinates_list,common_coordinates_set,glint_coordinates_list
+    
+    # L2R
     else:
         ND_coordinates = np.column_stack(np.where(np.all((img > -30000) & (img < 30000), axis=-1)))#where not no data (in any band)
         ND_coordinates_list = list(map(tuple, ND_coordinates))
@@ -164,10 +174,16 @@ def process_image_with_filters(img, selected_columns):
     filter_list = [value for value in selected_columns if value not in [["lat"], ["long"], ["lat_abs"]]]
     output_bands = []
     for band, kernel_size, filter_type in filter_list:
+        
         if filter_type is None:
             filtered_band = img[:, :, band].astype(np.uint16)#this means it is a single pixel
         else:
-            filtered_band = apply_filter(img[:, :, band].astype(np.float32), kernel_size, filter_type).astype(np.uint16)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=RuntimeWarning)
+                filtered_band = apply_filter(img[:, :, band].astype(np.float32), kernel_size, filter_type)
+                filtered_band[filtered_band==-32768] = 32768
+                filtered_band = filtered_band.astype(np.uint16)
+            
         output_bands.append(filtered_band)#append to list of filters
         del filtered_band
         gc.collect()
@@ -177,13 +193,11 @@ def process_image_with_filters(img, selected_columns):
     gc.collect()
     return output_image.astype(np.uint16)
 
-
 def apply_filter(image_band, kernel_size, filter_type):
     if filter_type == 'sd':
         return std_dev_filter(image_band, kernel_size)
     elif filter_type == 'avg':
         return uniform_filter(image_band, size=kernel_size, mode='mirror', origin=0) #avg filtering
-
 
 def std_dev_filter(image_band, kernel_size):
     mean = uniform_filter(image_band, size=kernel_size, mode='mirror', origin=0)#custom std filter that is fast
@@ -192,7 +206,6 @@ def std_dev_filter(image_band, kernel_size):
     del mean, mean_of_squares
     gc.collect()
     return std_deviation
-
 
 def select_edge_and_buffer_no_data_pixels (img,correction, if_SR):
     b3 = img[:, :, 2].copy()#function selects the edge and no data and makes a buffer. these pixels are processed the slow method
@@ -283,10 +296,7 @@ def get_values_for_pixel(selected_columns, img_name, img, y, x,correction, model
             elif function == None:
                 values.append(band[y,x])#process if function it is pixel value
             del result,region,band
-            
-            
             labels.append(model_columns[n])
-            
             
     if labelling == False:
         labels = []#save space by returning empty labels
@@ -309,7 +319,6 @@ def get_mean_longitude(utm_zone):
         return int(mean_longitude)
     else:
         return None# Return None for invalid input
-
 
 def load_model_and_predict_pixels(value_list, model_path, cord_list, if_SR):
     with warnings.catch_warnings():
@@ -406,13 +415,6 @@ def plot_RGB_img(RGB_img):
     ax[2].imshow(RGB_img[:,:,2])
     ax[2].set_title('Masked Image')
     plt.show()
-
-
-
-
-
-
-
 
 
 

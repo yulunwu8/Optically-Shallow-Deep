@@ -20,18 +20,3 @@ def parse_string(s):
         return [first_group_int, int(groups[2]), groups[4]] if groups[4] else [first_group_int, int(groups[2]), None]
     else:
         return None
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

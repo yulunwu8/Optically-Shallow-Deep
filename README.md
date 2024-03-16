@@ -2,7 +2,14 @@
 
 This python tool delineates optically shallow and deep waters in Sentinel-2 imagery. The tool uses a deep neural network that was trained on a diverse set of global images.
 
-Supported input includes L1C files and ACOLITE-processed L2R files. The output geotiff contains probabilities of water pixels being optically shallow and deep. 
+Supported input includes L1C SAFE files and ACOLITE-processed L2R netCDF files. The output geotiff contains probabilities of water pixels being optically shallow and deep. 
+
+Output is a 3-band geotiff: 
+
+- B1: Binary prediction (OSW/ODW)
+- B2: Prediction probability of OSW (100 means most likely OSW, 0 means most likely ODW) 
+- B3: pixels that are masked out
+
 
 
 Originally coded by by Galen Richardson and Anders Knudby, modified and uploaded by Yulun Wu
@@ -68,8 +75,8 @@ python3 -m pip install opticallyshallowdeep
 
 ```python
 import opticallyshallowdeep as osd
-file_in = 'path1'
-file_out = 'path2'
+file_in = 'test_folder_in/S2.SAFE'
+folder_out = 'folder/test_folder_out'
 osd.run(file_in, file_out)
 ```
 

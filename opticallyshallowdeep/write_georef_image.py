@@ -2,7 +2,6 @@
 import rasterio, gc
 import numpy as np
 
-
 def write_georef_image(image_with_ref,RGB_img,output_name):
     raster_with_ref = rasterio.open(image_with_ref) # Open the raster with geospatial information
     crs = raster_with_ref.crs#Get the CRS (Coordinate Reference System) from the raster

@@ -5,7 +5,7 @@ with open("readme.md", "r") as fh:
 
 setup(
     name='opticallyshallowdeep',
-    version='0.0.1',
+    version='1.0.0',
     author='Yulun Wu',
     author_email='yulunwu8@gmail.com',
     description='Identify optically shallow and deep waters in satellite imagery',

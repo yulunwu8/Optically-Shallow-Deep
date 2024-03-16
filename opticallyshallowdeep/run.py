@@ -1,8 +1,7 @@
 
-
-import sys, os, gc
+import sys, os, gc, time
 import tifffile as tif
-
+from importlib.metadata import version
 
 from .make_multiband_image import make_multiband_image
 from .check_transpose import check_transpose
@@ -14,30 +13,50 @@ from .write_georef_image import write_georef_image
 from .netcdf_to_multiband_geotiff import netcdf_to_multiband_geotiff
 
 
-
-def run(file_in,folder_out):
-    
-    print('test')
-    
-    
-    ### Add logging 
-    
-    
+def run(file_in,folder_out, to_log=True):
     
     ### Check the two 
+    if not os.path.exists(file_in):
+        sys.exit('file_in does not exist: ' + str(file_in))
+    
     # folder_out: if not exist -> create it 
+    if not os.path.exists(folder_out):
+        os.makedirs(folder_out)
     
+    ### Print all metadata/settings and save them in a txt file
+    if to_log: 
+        # Start logging in txt file
+        orig_stdout = sys.stdout
+        
+        log_base = os.path.basename(file_in).replace('.nc','.txt').replace('.safe','.txt').replace('.SAFE','.txt')
+        log_base = 'OSD_log_'+ log_base
+        log_file = os.path.join(folder_out,log_base)
+
+        class Logger:
+            def __init__(self, filename):
+                self.console = sys.stdout
+                self.file = open(filename, 'w')
+                self.file.flush()
+            def write(self, message):
+                self.console.write(message)
+                self.file.write(message)
+            def flush(self):
+                self.console.flush()
+                self.file.flush()
     
+        sys.stdout = Logger(log_file)
+    
+    # Metadata
+    print('OSD version: ' + str(version('opticallyshallowdeep')))
+    print('Start time: ' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
+    print('file_in: ' + str(file_in))
+    print('folder_out: ' + str(folder_out))
     
     # Columns 
     GTOA_model_columns=['long', 'lat_abs', 'B2-w_15_sd', 'B3-w_3_sd', 'B3-w_7_avg', 'B3-w_9_avg', 'B3-w_11_sd', 'B3-w_15_sd', 'B4-w_5_avg', 'B4-w_11_sd', 'B4-w_13_avg', 'B4-w_13_sd', 'B4-w_15_sd', 'B5-w_13_sd', 'B5-w_15_sd', 'B8-w_9_sd', 'B8-w_13_sd', 'B8-w_15_sd', 'B11-w_9_avg', 'B11-w_15_sd']
     GACOLITE_model_columns= ['lat_abs', 'B1-w_15_sd', 'B2-w_1', 'B3-w_5_sd', 'B3-w_7_sd', 'B3-w_13_sd', 'B3-w_15_sd', 'B4-w_15_sd', 'B5-w_11_avg', 'B5-w_15_avg', 'B5-w_15_sd', 'B8-w_13_sd', 'B11-w_15_avg']       
     
-    
-    
-    # take input path 
-    
-    # identify model path 
+    ### Take input path and identify model path 
     
     # TOA
     if (file_in.endswith('.safe') or file_in.endswith('.SAFE')) and 'MSIL1C' in file_in: 
@@ -47,8 +66,6 @@ def run(file_in,folder_out):
         
         # make multiband_image 
         image_path = make_multiband_image(file_in,folder_out)
-        
-        
         
     # SR 
     elif file_in.endswith('.nc') or file_in.endswith('.NC'):
@@ -60,61 +77,29 @@ def run(file_in,folder_out):
         image_path = netcdf_to_multiband_geotiff(file_in, folder_out)
         
     print('\nmultiband_image: '+str(image_path))
-        
-    
-    
-    
-        
-    # Make it a list of lists
+         
+    # make it a list of lists
     selected_columns = [parse_string(s) for s in model_columns]
-    
-    print('if_SR: ' +str(if_SR))
-    
-    print('model: ' +str(model))
-    
+    print('If input is SR product: ' +str(if_SR))
     model_path = os.path.join(os.path.dirname(__file__), model)    
-    print('model_path: ' +str(model_path))
+    print('Trained model to use: ' +str(model_path))
     
-
-    
-    
-    #read image
+    # read image
     image = tif.imread(image_path, dtype='int16') 
     
     # check 
     image=check_transpose(image)
 
-    #create strips and process them -- make big RGB image
-    RGB_img=process_as_strips(image, image_path, if_SR, model_path, selected_columns, model_columns) 
+    # create strips and process them -- make big RGB image
+    RGB_img=process_as_strips(image, image_path, if_SR, model_path, selected_columns, model_columns, file_in) 
     
-    
-
-    write_georef_image(image_path,RGB_img,image_path[:-4]+'_OSW_ODW.tif') #write as geotiff
-    
+    # write as geotiff
+    write_georef_image(image_path,RGB_img,image_path[:-4]+'_OSW_ODW.tif') 
     print("Image OSW/ODW completed {}".format(RGB_img.shape))
     
     del RGB_img
     gc.collect()
     
+    # stop logging 
+    if to_log: sys.stdout = orig_stdout
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-
-
