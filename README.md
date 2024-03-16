@@ -85,4 +85,4 @@ Output is a 3-band geotiff:
 - B2: Prediction probability of OSW (100 means most likely OSW, 0 means most likely ODW) 
 - B3: pixels that are masked out
 
-An intermediate multi-band geotiff will also be generated in the output folder. It can be deleted after the processing. 
+An intermediate multi-band geotiff and a log file are also generated in the output folder. They can be deleted after the processing. 
