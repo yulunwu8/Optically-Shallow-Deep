@@ -11,6 +11,8 @@ from .process_as_strips import process_as_strips
 from .parse_string import parse_string
 
 from .write_georef_image import write_georef_image
+from .netcdf_to_multiband_geotiff import netcdf_to_multiband_geotiff
+
 
 
 def run(file_in,folder_out):
@@ -22,13 +24,8 @@ def run(file_in,folder_out):
     
     
     
-    
     ### Check the two 
     # folder_out: if not exist -> create it 
-    
-    
-    
-    
     
     
     
@@ -38,31 +35,38 @@ def run(file_in,folder_out):
     
     
     
-    
-    
-    
     # take input path 
     
     # identify model path 
     
-    if file_in.endswith('.safe') or file_in.endswith('.SAFE'):
-        if 'MSIL1C' in file_in: 
-            if_SR = False
-            model = 'models/TOA.h5'
-            model_columns = GTOA_model_columns
-            
-            
-    ### else: SR ???
-    else:
+    # TOA
+    if (file_in.endswith('.safe') or file_in.endswith('.SAFE')) and 'MSIL1C' in file_in: 
+        if_SR = False
+        model = 'models/TOA.h5'
+        model_columns = GTOA_model_columns
+        
+        # make multiband_image 
+        image_path = make_multiband_image(file_in,folder_out)
+        
+        
+        
+    # SR 
+    elif file_in.endswith('.nc') or file_in.endswith('.NC'):
         if_SR = True
         model = 'models/SR.h5'
         model_columns = GACOLITE_model_columns
         
+        # make multiband_image 
+        image_path = netcdf_to_multiband_geotiff(file_in, folder_out)
+        
+    print('\nmultiband_image: '+str(image_path))
+        
+    
+    
+    
         
     # Make it a list of lists
     selected_columns = [parse_string(s) for s in model_columns]
-    
-    
     
     print('if_SR: ' +str(if_SR))
     
@@ -71,13 +75,7 @@ def run(file_in,folder_out):
     model_path = os.path.join(os.path.dirname(__file__), model)    
     print('model_path: ' +str(model_path))
     
-    
-    # copy files to a new path??? Why 
-    
-    # make multiband_image (should include ACOLITE NetCDF as input) !!! 
-    image_path = make_multiband_image(file_in,folder_out)
-    
-    print('\nmultiband_image: '+str(image_path))
+
     
     
     #read image
@@ -91,7 +89,7 @@ def run(file_in,folder_out):
     
     
 
-    write_georef_image(image_path,RGB_img,image_path[:-4]+'OSW_ODW.tif') #write as geotiff
+    write_georef_image(image_path,RGB_img,image_path[:-4]+'_OSW_ODW.tif') #write as geotiff
     
     print("Image OSW/ODW completed {}".format(RGB_img.shape))
     
