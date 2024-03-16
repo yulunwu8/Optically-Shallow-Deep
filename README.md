@@ -4,7 +4,7 @@ This python tool delineates optically shallow and deep waters in Sentinel-2 imag
 
 Supported input includes L1C SAFE files and ACOLITE-processed L2R netCDF files. The output geotiff contains probabilities of water pixels being optically shallow and deep. 
 
-Originally coded by by Galen Richardson and Anders Knudby, modified and uploaded by Yulun Wu
+Originally coded by by Galen Richardson and Anders Knudby, modified and packaged by Yulun Wu
 
 
  
