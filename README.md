@@ -15,7 +15,7 @@ Home page: <a href="https://github.com/yulunwu8/Optically-Shallow-Deep" target="
 **1 - Create a conda environment and activate it:**
 
 ```bash
-conda create --name opticallyshallowdeep
+conda create --name opticallyshallowdeep python=3.10
 conda activate opticallyshallowdeep
 ```
 
@@ -38,6 +38,12 @@ pip3 install tensorflow
 
 ```
 
+If you have compatibility issues, please try tensorflow 2.13.0: 
+
+```bash
+pip3 install tensorflow
+
+```
 
 
 More on installing tensorflow: [https://www.tensorflow.org/install](https://www.tensorflow.org/install)
