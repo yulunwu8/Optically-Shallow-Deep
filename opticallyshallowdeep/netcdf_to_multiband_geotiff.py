@@ -6,7 +6,10 @@ import rasterio
 from rasterio.crs import CRS
 from rasterio.transform import from_origin
 import netCDF4 as nc4
-from pyproj import Proj, transform
+# from pyproj import Proj, transform
+
+import pyproj
+
 from .find_epsg import find_epsg
 
 def netcdf_to_multiband_geotiff(netcdf_file, folder_out):
@@ -47,14 +50,21 @@ def netcdf_to_multiband_geotiff(netcdf_file, folder_out):
         epsg_code = find_epsg(wkt)
         
         # Initialize the projections
-        proj_latlon = Proj(proj='latlong', datum='WGS84')
         
-        proj_utm = Proj('epsg:' + str(epsg_code))
+        # proj_latlon = pyproj.Proj(proj='latlong', datum='WGS84')
+        # proj_utm = pyproj.Proj('epsg:' + str(epsg_code))
+        # xmin, ymin = pyproj.transform(proj_latlon, proj_utm, lon[10979,0], lat[10979,0])
+        # xmax, ymax = pyproj.transform(proj_latlon, proj_utm, lon[0,10979], lat[0,10979])
+
+        proj_latlon = pyproj.CRS(proj='latlong', datum='WGS84')
+        proj_utm = pyproj.CRS('epsg:' + str(epsg_code))
+        
+        transformer = pyproj.Transformer.from_crs(proj_latlon, proj_utm)
         
         # Transform the latitude and longitude to the target projection 
         # For this, find the min/max coordinates in the projected system
-        xmin, ymin = transform(proj_latlon, proj_utm, lon[10979,0], lat[10979,0])
-        xmax, ymax = transform(proj_latlon, proj_utm, lon[0,10979], lat[0,10979])
+        xmin, ymin = transformer.transform(lon[10979,0], lat[10979,0])
+        xmax, ymax = transformer.transform(lon[0,10979], lat[0,10979])
                 
         transform_ = from_origin(round(xmin-5,-1), round(ymax+5,-1), 10, 10)
         

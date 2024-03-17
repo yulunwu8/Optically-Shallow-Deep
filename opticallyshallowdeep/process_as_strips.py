@@ -88,6 +88,12 @@ def correct_baseline(img,file_path, if_SR, file_in):
         xml = minidom.parse(xml_path)#look at xml for correction first
         tdom = xml.getElementsByTagName('RADIO_ADD_OFFSET')#if this tag exists it is after baseline 4
         
+        
+        tdom_URI = xml.getElementsByTagName('PRODUCT_URI')
+        S2_URI = tdom_URI[0].firstChild.nodeValue
+        img_name = S2_URI[39:44]
+        
+        
         # If no RADIO_ADD_OFFSET
         if len(tdom) == 0: 
             
