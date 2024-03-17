@@ -6,6 +6,8 @@ Supported input includes L1C SAFE files and ACOLITE-processed L2R netCDF files. 
 
 Originally coded by by Galen Richardson and Anders Knudby, modified and packaged by Yulun Wu
 
+Home page: <a href="https://github.com/yulunwu8/Optically-Shallow-Deep" target="_blank">https://github.com/yulunwu8/Optically-Shallow-Deep</a>
+
 
  
 ## Installation 
