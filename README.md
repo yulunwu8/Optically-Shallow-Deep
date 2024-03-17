@@ -41,7 +41,7 @@ pip3 install tensorflow
 If you have compatibility issues, please try tensorflow 2.13.0: 
 
 ```bash
-pip3 install tensorflow
+pip3 install tensorflow==2.13.0
 
 ```
 
