@@ -366,7 +366,7 @@ def load_tf_model(model_path, if_SR):
         return model
 
 def d6_model(u1,LR): # the last tested. good for more data.
-    INPUT=Input(shape=(20))
+    INPUT=Input(shape=(20,))
     d1=Dense(u1, activation='LeakyReLU')(INPUT)
     d2=Dense(u1, activation='LeakyReLU')(d1)
     d3=Dense(u1, activation='LeakyReLU')(d2)
@@ -378,7 +378,7 @@ def d6_model(u1,LR): # the last tested. good for more data.
     return model
 
 def d4_model(u1,LR): # the last tested. good for more data.
-    INPUT=Input(shape=(13))
+    INPUT=Input(shape=(13,))
     d1=Dense(u1, activation='LeakyReLU')(INPUT)
     d2=Dense(u1, activation='LeakyReLU')(d1)
     d3=Dense(u1, activation='LeakyReLU')(d2)
