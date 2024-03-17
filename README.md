@@ -29,20 +29,12 @@ python -m pip install tensorflow-macos
 
 ```
 
-(Optional) To utilize GPUs on mac OS: 
-
-
-```bash
-python -m pip install tensorflow-metal
-
-```
-
 
 
 For windows:
 
 ```bash
-python3 -m pip install tensorflow
+pip3 install tensorflow
 
 ```
 
@@ -61,7 +53,7 @@ conda install -c conda-forge geopandas rasterio tifffile netCDF4 pyproj
 **4 - Install opticallyshallowdeep:**
 
 ```bash
-python3 -m pip install opticallyshallowdeep
+pip3 install opticallyshallowdeep
 ```
 
 
