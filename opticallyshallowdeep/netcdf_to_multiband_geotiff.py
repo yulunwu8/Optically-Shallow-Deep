@@ -21,6 +21,8 @@ def netcdf_to_multiband_geotiff(netcdf_file, folder_out):
         print('Geotiff exists: ' + str(output_geotiff_file))
     
     else: 
+        
+        print('Making multi-band geotiff: ' + str(output_geotiff_file))
         value_for_nodata = -32768
         
         # Open the NetCDF file
@@ -83,7 +85,7 @@ def netcdf_to_multiband_geotiff(netcdf_file, folder_out):
             for i in range(len(bands)):
                 dst.write(data_array[i,:,:], i+1)
                 
-        print(f'Multi-band GeoTIFF saved to {output_geotiff_file}')
+        print('Done')
     
     return output_geotiff_file
     

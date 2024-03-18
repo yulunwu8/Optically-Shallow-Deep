@@ -5,7 +5,7 @@ with open("readme.md", "r") as fh:
 
 setup(
     name='opticallyshallowdeep',
-    version='1.1.2',
+    version='1.1.3',
     author='Yulun Wu',
     author_email='yulunwu8@gmail.com',
     description='Identify optically shallow and deep waters in satellite imagery',
@@ -18,7 +18,8 @@ setup(
         'Programming Language :: Python :: 3'
     ],
     python_requires='>=3.8',
-    install_requires=['geopandas','rasterio','tifffile','netCDF4','pyproj','joblib','scipy','matplotlib']
+    install_requires=['geopandas','rasterio','tifffile','netCDF4','pyproj',
+                      'joblib','scipy','matplotlib','tensorflow']
 )
 
 

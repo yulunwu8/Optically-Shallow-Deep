@@ -22,11 +22,11 @@ def process_as_strips (full_img, image_path, if_SR, model_path, selected_columns
     striplist=[strip1, strip2, strip3, strip4,strip5] #make strip list
     RGBlist=[]
     for n in range(len(striplist)):
-        print(" Strip {}".format(n+1))
+        print(" Strip {}/5".format(n+1))
         strip_p=process_img_to_rgb(striplist[n],image_path, if_SR, model_path, selected_columns, model_columns, file_in) #output is RGB of image
         RGBlist.append(strip_p) #append processed strip to RGB list
     RGB_img=join_vertical_strips(RGBlist[0], RGBlist[1], RGBlist[2], RGBlist[3],RGBlist[4])
-    plot_RGB_img(RGB_img) #show the final image
+    plot_RGB_img(RGB_img, image_path) #save the final image
     return RGB_img
 
 
@@ -50,7 +50,7 @@ def process_img_to_rgb(img,file_path, if_SR, model_path, selected_columns, model
         return RGB_img
     else:
         # print("  {} {} Coordinates of non-glinty water pixels".format(time_tracker(start_time),len(final_cord)))
-        print("  {} Coordinates of non-glinty water pixels".format(len(final_cord)))
+        print("  Processing {} unmasked water pixels".format(len(final_cord)))
         
         filter_image = process_image_with_filters(img, selected_columns) #creating a filter image to extract values from
         edge_nodata_list = select_edge_and_buffer_no_data_pixels (img,correction, if_SR) #selecting pixels for slow processing
@@ -60,7 +60,7 @@ def process_img_to_rgb(img,file_path, if_SR, model_path, selected_columns, model
         cord_list, pred_results, con_1=load_model_and_predict_pixels(value_list,model_path,cord_list, if_SR)
         RGB_img=make_output_images_fast(cord_list, pred_results, con_1,img)#make RBG image
         # print("  {} Finished model predictions".format(time_tracker(start_time)))
-        print("  Finished model predictions")
+        print("  Strip complete")
         
         del cord_list, pred_results, con_1,img
         gc.collect()
@@ -411,7 +411,7 @@ def join_vertical_strips(strip1, strip2, strip3, strip4, strip5):
     joined_array = np.hstack((strip1_cropped, strip2_cropped, strip3_cropped, strip4_cropped,strip5_cropped))
     return joined_array
 
-def plot_RGB_img(RGB_img):
+def plot_RGB_img(RGB_img, image_path):
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(1, 3, figsize=(10, 10), sharex=True, sharey=True)
     ax[0].imshow(RGB_img[:,:,0])#plotting to see what OSW/ODW looks like
@@ -420,7 +420,19 @@ def plot_RGB_img(RGB_img):
     ax[1].set_title('Prediction Probability Image')
     ax[2].imshow(RGB_img[:,:,2])
     ax[2].set_title('Masked Image')
-    plt.show()
+    # plt.show()
+    
+    out_path = image_path.replace('.tif','.png')
+    plt.savefig(out_path)
+
+
+
+
+
+
+
+
+
 
 
 

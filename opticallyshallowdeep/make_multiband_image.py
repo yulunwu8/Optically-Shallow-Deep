@@ -7,14 +7,16 @@ import gc
 # make multiband images in output dir
 def make_multiband_image(file_in,folder_out):
 
-    print("Processing {}".format(file_in))
-
     basename = os.path.basename(file_in).rstrip(".SAFE")
     
     # output path
     imageFile = os.path.join(folder_out,basename) + '.tif'
     
-    if not os.path.exists(imageFile):
+    if os.path.exists(imageFile):
+        print('Geotiff exists: ' + str(imageFile))
+    else:
+        print('Making multi-band geotiff: ' + str(imageFile))
+
         band_numbers = ['B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07', 'B08', 'B8A', 'B11', 'B12']
         S2Files = [glob.glob(f'{file_in}/**/IMG_DATA/**/*{band}.jp2', recursive=True)[0] for band in band_numbers]
         b2File = S2Files[1]
@@ -49,6 +51,7 @@ def make_multiband_image(file_in,folder_out):
         band2.close()
         del stack,stackTransposed,S2Files,band2
         gc.collect()
+        print('Done')
 
     return imageFile
 

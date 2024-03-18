@@ -47,10 +47,13 @@ def run(file_in,folder_out, to_log=True):
         sys.stdout = Logger(log_file)
     
     # Metadata
+    print('=== ENVIRONMENT ===')
     print('OSD version: ' + str(version('opticallyshallowdeep')))
     print('Start time: ' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
     print('file_in: ' + str(file_in))
     print('folder_out: ' + str(folder_out))
+    print('\n=== PRE-PROCESSING ===')
+    
     
     # Columns 
     GTOA_model_columns=['long', 'lat_abs', 'B2-w_15_sd', 'B3-w_3_sd', 'B3-w_7_avg', 'B3-w_9_avg', 'B3-w_11_sd', 'B3-w_15_sd', 'B4-w_5_avg', 'B4-w_11_sd', 'B4-w_13_avg', 'B4-w_13_sd', 'B4-w_15_sd', 'B5-w_13_sd', 'B5-w_15_sd', 'B8-w_9_sd', 'B8-w_13_sd', 'B8-w_15_sd', 'B11-w_9_avg', 'B11-w_15_sd']
@@ -75,8 +78,6 @@ def run(file_in,folder_out, to_log=True):
         
         # make multiband_image 
         image_path = netcdf_to_multiband_geotiff(file_in, folder_out)
-        
-    print('\nmultiband_image: '+str(image_path))
          
     # make it a list of lists
     selected_columns = [parse_string(s) for s in model_columns]
@@ -90,11 +91,13 @@ def run(file_in,folder_out, to_log=True):
     # check 
     image=check_transpose(image)
 
+    print('\n=== PREDICTING OSW/ODW ===')
+
     # create strips and process them -- make big RGB image
     RGB_img=process_as_strips(image, image_path, if_SR, model_path, selected_columns, model_columns, file_in) 
     
     # write as geotiff
-    write_georef_image(image_path,RGB_img,image_path[:-4]+'_OSW_ODW.tif') 
+    write_georef_image(image_path,RGB_img) 
     print("Image OSW/ODW completed {}".format(RGB_img.shape))
     
     del RGB_img

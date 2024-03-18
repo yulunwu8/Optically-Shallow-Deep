@@ -2,8 +2,10 @@
 import rasterio, gc
 import numpy as np
 
-def write_georef_image(image_with_ref,RGB_img,output_name):
-    raster_with_ref = rasterio.open(image_with_ref) # Open the raster with geospatial information
+def write_georef_image(image_path,RGB_img):
+    
+    output_name = image_path.replace('.tif','_OSW_ODW.tif')
+    raster_with_ref = rasterio.open(image_path) # Open the raster with geospatial information
     crs = raster_with_ref.crs#Get the CRS (Coordinate Reference System) from the raster
     epsg_from_raster = crs.to_epsg()#Use the EPSG code from the CRS
     height, width, _ = RGB_img.shape

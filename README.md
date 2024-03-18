@@ -30,33 +30,25 @@ python -m pip install tensorflow-macos
 ```
 
 
-
 For windows:
-
-```bash
-pip3 install tensorflow
-
-```
-
-If you have compatibility issues, please try tensorflow 2.13.0: 
 
 ```bash
 pip3 install tensorflow==2.13.0
 
 ```
 
-
-More on installing tensorflow: [https://www.tensorflow.org/install](https://www.tensorflow.org/install)
-
-
-**3 - Install other dependencies:**
+In case of compatibility issues, please try the newest version of tensorflow: 
 
 ```bash
-conda install -c conda-forge geopandas rasterio tifffile netCDF4 pyproj
+pip3 install --upgrade --force-reinstall tensorflow
+
 ```
 
 
-**4 - Install opticallyshallowdeep:**
+For Linux and more on installing tensorflow: [https://www.tensorflow.org/install](https://www.tensorflow.org/install)
+
+
+**3 - Install opticallyshallowdeep:**
 
 ```bash
 pip3 install opticallyshallowdeep
@@ -85,4 +77,4 @@ Output is a 3-band geotiff:
 - B2: Prediction probability of OSW (100 means most likely OSW, 0 means most likely ODW) 
 - B3: pixels that are masked out
 
-An intermediate multi-band geotiff and a log file are also generated in the output folder. They can be deleted after the processing. 
+A log file, an intermediate multi-band geotiff, and a preview PNG are also generated in the output folder. They can be deleted after the processing. 
