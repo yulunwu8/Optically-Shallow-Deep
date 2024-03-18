@@ -18,7 +18,7 @@ def netcdf_to_multiband_geotiff(netcdf_file, folder_out):
     output_geotiff_file = os.path.join(folder_out, tif_base)
     
     if os.path.exists(output_geotiff_file):
-        print('Geotiff exists: ' + str(output_geotiff_file))
+        print('Multi-band geotiff exists: ' + str(output_geotiff_file))
     
     else: 
         

@@ -47,7 +47,7 @@ def run(file_in,folder_out, to_log=True):
         sys.stdout = Logger(log_file)
     
     # Metadata
-    print('=== ENVIRONMENT ===')
+    print('\n=== ENVIRONMENT ===')
     print('OSD version: ' + str(version('opticallyshallowdeep')))
     print('Start time: ' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
     print('file_in: ' + str(file_in))
@@ -98,7 +98,9 @@ def run(file_in,folder_out, to_log=True):
     
     # write as geotiff
     write_georef_image(image_path,RGB_img) 
-    print("Image OSW/ODW completed {}".format(RGB_img.shape))
+    print("Image OSW/ODW completed, dimension: {}".format(RGB_img.shape))
+    
+    print('Finish time: ' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
     
     del RGB_img
     gc.collect()

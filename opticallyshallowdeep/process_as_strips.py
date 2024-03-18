@@ -22,7 +22,7 @@ def process_as_strips (full_img, image_path, if_SR, model_path, selected_columns
     striplist=[strip1, strip2, strip3, strip4,strip5] #make strip list
     RGBlist=[]
     for n in range(len(striplist)):
-        print(" Strip {}/5".format(n+1))
+        print("Strip {}/5".format(n+1))
         strip_p=process_img_to_rgb(striplist[n],image_path, if_SR, model_path, selected_columns, model_columns, file_in) #output is RGB of image
         RGBlist.append(strip_p) #append processed strip to RGB list
     RGB_img=join_vertical_strips(RGBlist[0], RGBlist[1], RGBlist[2], RGBlist[3],RGBlist[4])
@@ -50,7 +50,7 @@ def process_img_to_rgb(img,file_path, if_SR, model_path, selected_columns, model
         return RGB_img
     else:
         # print("  {} {} Coordinates of non-glinty water pixels".format(time_tracker(start_time),len(final_cord)))
-        print("  Processing {} unmasked water pixels".format(len(final_cord)))
+        print("  Processing {} water pixels".format(len(final_cord)))
         
         filter_image = process_image_with_filters(img, selected_columns) #creating a filter image to extract values from
         edge_nodata_list = select_edge_and_buffer_no_data_pixels (img,correction, if_SR) #selecting pixels for slow processing
@@ -108,7 +108,7 @@ def correct_baseline(img,file_path, if_SR, file_in):
             '''Correction is a very important variable, since in some of the images we need to add 1000 in order to
             correct for baseline 4. In these instances, 0 becomes 1000. There are times where we need to mask out 0 pixels
             or avoid 0, so we use correction as a variable for pixels that are originally 0'''
-            print('  Adjusted pixel value for before Baseline 4 processing')
+            # print('  Adjusted pixel value for before Baseline 4 processing')
             del chunks
         
         # If there is RADIO_ADD_OFFSET
@@ -168,7 +168,7 @@ def make_blank_img(img):
     Y_b, X_b, b = img.shape #sometimes the image is all no data or the correction value, in this instance, we make a blank image
     RGB_img = np.zeros((Y_b, X_b, 3), dtype=np.uint8)
     # print('  {} Blank strip added. No valid water pixels'.format(time_tracker(start_time)))
-    print('  {} Blank strip added. No valid water pixels')
+    print('  No valid water pixels')
     return RGB_img
 
 def time_tracker(start_time):

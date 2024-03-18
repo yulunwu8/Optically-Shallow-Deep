@@ -12,7 +12,7 @@ import opticallyshallowdeep as osd
 
 
 file_in = '/Users/yw/Local_storage/temp_OSD_test/S2B_MSIL1C_20210902T015619_N0301_R117_T51KWB_20210902T033620.SAFE'
-file_in = '/Users/yw/Local_storage/temp_OSD_test/temp_out/S2B_MSI_2021_09_02_02_02_11_T51KWB_L2R.nc'
+# file_in = '/Users/yw/Local_storage/temp_OSD_test/temp_out/S2B_MSI_2021_09_02_02_02_11_T51KWB_L2R.nc'
 
 
 

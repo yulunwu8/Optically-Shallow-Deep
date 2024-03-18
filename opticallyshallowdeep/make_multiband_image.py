@@ -13,7 +13,7 @@ def make_multiband_image(file_in,folder_out):
     imageFile = os.path.join(folder_out,basename) + '.tif'
     
     if os.path.exists(imageFile):
-        print('Geotiff exists: ' + str(imageFile))
+        print('Multi-band geotiff exists: ' + str(imageFile))
     else:
         print('Making multi-band geotiff: ' + str(imageFile))
 
@@ -26,7 +26,7 @@ def make_multiband_image(file_in,folder_out):
         res = int(band2.transform[0])
         arrayList = []
         for bandFile in S2Files:
-            print("Reading band: {}".format(bandFile))
+            # print("Reading band: {}".format(bandFile))
             band = rasterio.open(bandFile)
             ar = band.read(1)
             bandRes = int(band.transform[0])
