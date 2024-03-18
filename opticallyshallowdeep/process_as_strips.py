@@ -60,7 +60,7 @@ def process_img_to_rgb(img,file_path, if_SR, model_path, selected_columns, model
         cord_list, pred_results, con_1=load_model_and_predict_pixels(value_list,model_path,cord_list, if_SR)
         RGB_img=make_output_images_fast(cord_list, pred_results, con_1,img)#make RBG image
         # print("  {} Finished model predictions".format(time_tracker(start_time)))
-        print("  Strip complete")
+        print("  Complete")
         
         del cord_list, pred_results, con_1,img
         gc.collect()

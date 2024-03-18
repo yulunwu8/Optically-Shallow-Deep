@@ -1,6 +1,6 @@
 # Optically-Shallow-Deep 
 
-This python tool delineates optically shallow and deep waters in Sentinel-2 imagery. The tool uses a deep neural network that was trained on a diverse set of global images.
+This python tool delineates optically shallow and deep waters in Sentinel-2 imagery. The tool uses a deep neural network (DNN) that was trained on a diverse set of global images.
 
 Supported input includes L1C SAFE files and ACOLITE-processed L2R netCDF files. The output geotiff contains probabilities of water pixels being optically shallow and deep. 
 
@@ -78,3 +78,11 @@ Output is a 3-band geotiff:
 - B3: pixels that are masked out
 
 A log file, an intermediate multi-band geotiff, and a preview PNG are also generated in the output folder. They can be deleted after the processing. 
+
+## Training, test, and validation data 
+
+All annotated shapefiles used in training, testing, and validating the DNN model are in the annotated_shapefiles folder, grouped by Sentinel-2 Scene ID.
+
+
+
+
