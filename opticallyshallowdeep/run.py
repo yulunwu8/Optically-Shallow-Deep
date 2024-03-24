@@ -11,13 +11,17 @@ from .parse_string import parse_string
 
 from .write_georef_image import write_georef_image
 from .netcdf_to_multiband_geotiff import netcdf_to_multiband_geotiff
+from .make_vertical_strips import make_vertical_strips
+from .cloud_mask import cloud_mask
 
 
-def run(file_in,folder_out, to_log=True):
+
+
+def run(file_L1C, folder_out, file_L2R = None, to_log=True):
     
     ### Check the two 
-    if not os.path.exists(file_in):
-        sys.exit('file_in does not exist: ' + str(file_in))
+    if not os.path.exists(file_L1C):
+        sys.exit('file_L1C does not exist: ' + str(file_L1C))
     
     # folder_out: if not exist -> create it 
     if not os.path.exists(folder_out):
@@ -28,7 +32,7 @@ def run(file_in,folder_out, to_log=True):
         # Start logging in txt file
         orig_stdout = sys.stdout
         
-        log_base = os.path.basename(file_in).replace('.nc','.txt').replace('.safe','.txt').replace('.SAFE','.txt')
+        log_base = os.path.basename(file_L1C).replace('.safe','.txt').replace('.SAFE','.txt')
         log_base = 'OSD_log_'+ log_base
         log_file = os.path.join(folder_out,log_base)
 
@@ -50,7 +54,8 @@ def run(file_in,folder_out, to_log=True):
     print('\n=== ENVIRONMENT ===')
     print('OSD version: ' + str(version('opticallyshallowdeep')))
     print('Start time: ' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
-    print('file_in: ' + str(file_in))
+    print('file_L1C: ' + str(file_L1C))
+    print('file_L2R: ' + str(file_L2R))
     print('folder_out: ' + str(folder_out))
     print('\n=== PRE-PROCESSING ===')
     
@@ -61,23 +66,30 @@ def run(file_in,folder_out, to_log=True):
     
     ### Take input path and identify model path 
     
-    # TOA
-    if (file_in.endswith('.safe') or file_in.endswith('.SAFE')) and 'MSIL1C' in file_in: 
+    # If ACOLITE L2R is not provided 
+    if file_L2R is None: 
+        
         if_SR = False
         model = 'models/TOA.h5'
         model_columns = GTOA_model_columns
+        file_in = file_L1C
         
         # make multiband_image 
-        image_path = make_multiband_image(file_in,folder_out)
+        image_path = make_multiband_image(file_L1C,folder_out)
+    
+    # If ACOLITE L2R is provided 
+    else:
         
-    # SR 
-    elif file_in.endswith('.nc') or file_in.endswith('.NC'):
+        if not os.path.exists(file_L2R):
+            sys.exit('file_L2R does not exist: ' + str(file_L2R))
+        
         if_SR = True
         model = 'models/SR.h5'
         model_columns = GACOLITE_model_columns
+        file_in = file_L2R
         
         # make multiband_image 
-        image_path = netcdf_to_multiband_geotiff(file_in, folder_out)
+        image_path = netcdf_to_multiband_geotiff(file_L2R, folder_out)
          
     # make it a list of lists
     selected_columns = [parse_string(s) for s in model_columns]
@@ -90,11 +102,15 @@ def run(file_in,folder_out, to_log=True):
     
     # check 
     image=check_transpose(image)
+    
+    # make cloud mask 
+    img_cloud = cloud_mask(file_L1C)
+    cloud_list = make_vertical_strips(img_cloud)
 
     print('\n=== PREDICTING OSW/ODW ===')
 
     # create strips and process them -- make big RGB image
-    RGB_img=process_as_strips(image, image_path, if_SR, model_path, selected_columns, model_columns, file_in) 
+    RGB_img=process_as_strips(image, image_path, if_SR, model_path, selected_columns, model_columns, file_in, cloud_list) 
     
     # write as geotiff
     write_georef_image(image_path,RGB_img) 

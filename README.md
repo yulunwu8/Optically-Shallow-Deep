@@ -57,25 +57,41 @@ pip3 install opticallyshallowdeep
 
 ## Quick Start
 
+For L1C files: 
+
 ```python
 import opticallyshallowdeep as osd
 
 # Input file 
-file_in = 'test_folder_in/S2.SAFE' # or path to an ACOLTIE-generated L2R netCDF file
+file_L1C = 'folder/S2.SAFE' 
 
 # Output folder 
 folder_out = 'folder/test_folder_out'
 
 # Run the OSW/ODW classifier 
-osd.run(file_in, folder_out)
+osd.run(file_L1C, folder_out)
 ```
 
+For ACOLITE  L2R files: 
 
-Output is a 3-band geotiff: 
+```python
+import opticallyshallowdeep as osd
 
-- B1: Binary prediction (OSW/ODW)
-- B2: Prediction probability of OSW (100 means most likely OSW, 0 means most likely ODW) 
-- B3: pixels that are masked out
+# Input files 
+file_L1C = 'test_folder_in/S2.SAFE' 
+file_L2R = 'test_folder_in/L2R.nc' 
+
+# Output folder 
+folder_out = 'folder/test_folder_out'
+
+# Run the OSW/ODW classifier 
+osd.run(file_in, folder_out, file_L2R=file_L2R)
+```
+
+The L1C file is always required as it contains a cloud mask. Pixels within 8 pixels of the cloud mask are masked to reduce the impact of clouds. 
+
+
+Output is a 1-band geotiff, with values of prediction probability of OSW (100 means most likely OSW, 0 means most likely ODW). Non-water pixels are masked. It is recommended to use pixels between 0 and 40 as ODW, and pixels between 60 and 100 as OSW (publication in review).
 
 A log file, an intermediate multi-band geotiff, and a preview PNG are also generated in the output folder. They can be deleted after the processing. 
 

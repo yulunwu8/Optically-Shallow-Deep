@@ -9,17 +9,19 @@ import opticallyshallowdeep as osd
 
 
 
+# file_L1C = '/Users/yw/Local_storage/temp_OSD_test/S2A_MSIL1C_20181019T051821_N0206_R062_T43PDQ_20181019T082135.SAFE'
+# file_L2R = '/Users/yw/Local_storage/temp_OSD_test/ACed/20181019/S2A_MSI_2018_10_19_05_26_21_T43PDQ_L2R.nc'
 
 
-file_in = '/Users/yw/Local_storage/temp_OSD_test/S2B_MSIL1C_20210902T015619_N0301_R117_T51KWB_20210902T033620.SAFE'
-# file_in = '/Users/yw/Local_storage/temp_OSD_test/temp_out/S2B_MSI_2021_09_02_02_02_11_T51KWB_L2R.nc'
+file_L1C = '/Users/yw/Local_storage/temp_OSD_test/S2B_MSIL1C_20230928T153619_N0509_R068_T17MNP_20230928T205247.SAFE'
+file_L2R = '/Users/yw/Local_storage/temp_OSD_test/ACed/20230928/S2B_MSI_2023_09_28_15_44_58_T17MNP_L2R.nc'
+
+folder_out = '/Users/yw/Local_storage/temp_OSD_test/temp_out3'
+
+osd.run(file_L1C, folder_out, file_L2R=file_L2R)
 
 
 
-folder_out = '/Users/yw/Local_storage/temp_OSD_test/temp_out2'
-
-
-osd.run(file_in,folder_out)
 
 
 
@@ -27,10 +29,18 @@ osd.run(file_in,folder_out)
 
 '''
 
-from matplotlib import pyplot as plt
-plt.imshow(filtered_band, interpolation='nearest')
-plt.show()
 
+# Interactive mode
+%matplotlib qt
+
+# Inline plotting 
+%matplotlib inline
+
+
+
+from matplotlib import pyplot as plt
+plt.imshow(img[:,:,0], interpolation='nearest')
+plt.show()
 
 
 '''

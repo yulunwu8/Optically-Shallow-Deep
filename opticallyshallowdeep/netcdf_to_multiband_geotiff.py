@@ -44,7 +44,7 @@ def netcdf_to_multiband_geotiff(netcdf_file, folder_out):
             for i, band_name in enumerate(band_names):
                 ar = nc.variables[band_name][:,:] * 10_000
                 ar[np.isnan(ar)] = value_for_nodata
-                data_array[i] = ar
+                data_array[i] = ar.astype('int16')
             
             lat = nc.variables['lat'][:,:]
             lon = nc.variables['lon'][:,:]

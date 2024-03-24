@@ -16,35 +16,26 @@ from scipy.ndimage import binary_dilation
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Dense
 from tensorflow.keras.models import Model,load_model
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-def process_as_strips (full_img, image_path, if_SR, model_path, selected_columns, model_columns, file_in):
-    strip1, strip2, strip3, strip4,strip5=make_vertical_strips(full_img) #create strips with overlap
-    striplist=[strip1, strip2, strip3, strip4,strip5] #make strip list
+from .make_vertical_strips import make_vertical_strips
+
+
+def process_as_strips (full_img, image_path, if_SR, model_path, selected_columns, model_columns, file_in, cloud_list):
+    striplist=make_vertical_strips(full_img) #create a list of strips with overlap
     RGBlist=[]
+    
     for n in range(len(striplist)):
         print("Strip {}/5".format(n+1))
-        strip_p=process_img_to_rgb(striplist[n],image_path, if_SR, model_path, selected_columns, model_columns, file_in) #output is RGB of image
+        strip_p=process_img_to_rgb(striplist[n],image_path, if_SR, model_path, selected_columns, model_columns, file_in, cloud_list[n]) #output is RGB of image
         RGBlist.append(strip_p) #append processed strip to RGB list
     RGB_img=join_vertical_strips(RGBlist[0], RGBlist[1], RGBlist[2], RGBlist[3],RGBlist[4])
     plot_RGB_img(RGB_img, image_path) #save the final image
     return RGB_img
 
-
-def make_vertical_strips(full_img):
-    '''use to save ram, process bigger images faster, and it overlaps so middle image is not 
-    distorted from how edge pixels are handled'''
-    height, width, _ = full_img.shape #this is done so strips do not have artifacts from kernals
-    overlap_size = 16 #size of overlap, max tile size is 15, so there is a 1px buffer
-    strip1 = full_img[:, :width//5 + overlap_size, :]#left overlap
-    strip2 = full_img[:, width//5: 2*width//5+ overlap_size, :]# left half overlap
-    strip3 = full_img[:, 2*width//5:3*width//5 + overlap_size, :]#left overlap
-    strip4 = full_img[:, 3*width//5:4*width//5+ overlap_size, :]#left overlap
-    strip5 = full_img[:, 4*width//5:width, :]# no overlap
-    return strip1,strip2,strip3,strip4,strip5
-
-def process_img_to_rgb(img,file_path, if_SR, model_path, selected_columns, model_columns, file_in):
+def process_img_to_rgb(img, file_path, if_SR, model_path, selected_columns, model_columns, file_in, img_cloud):
     img,img_name,correction=correct_baseline(img,file_path, if_SR, file_in)#used on slices or whole images
-    final_cord=get_water_pix_coord(img,correction, if_SR) #getting coordinates of water pixels
+    final_cord=get_water_pix_coord(img,correction, if_SR, img_cloud) #getting coordinates of water pixels
     if len(final_cord)==0:
         RGB_img=make_blank_img(img)
         return RGB_img
@@ -88,11 +79,9 @@ def correct_baseline(img,file_path, if_SR, file_in):
         xml = minidom.parse(xml_path)#look at xml for correction first
         tdom = xml.getElementsByTagName('RADIO_ADD_OFFSET')#if this tag exists it is after baseline 4
         
-        
         tdom_URI = xml.getElementsByTagName('PRODUCT_URI')
         S2_URI = tdom_URI[0].firstChild.nodeValue
         img_name = S2_URI[39:44]
-        
         
         # If no RADIO_ADD_OFFSET
         if len(tdom) == 0: 
@@ -119,7 +108,7 @@ def correct_baseline(img,file_path, if_SR, file_in):
     del img
     return imgf, img_name, correction
     
-def get_water_pix_coord(img,correction, if_SR):
+def get_water_pix_coord(img,correction, if_SR, img_cloud):
     #creates the mask of what is water by using Glint threshold, NDWI, NDSI...
     if if_SR == False:
         glint_t= 1500#this glint thresholds were used when training the model.
@@ -129,6 +118,7 @@ def get_water_pix_coord(img,correction, if_SR):
     glr, glc = glint_coordinates
     glint_coordinates_list = list(zip(glr, glc))#where not glint
     del glr, glc,glint_coordinates  
+    
     b3,b8,b11 = img[:, :, 2].astype(np.float32),img[:, :, 7].astype(np.float32),img[:, :, 9].astype(np.float32)
     NDWI = (b3 - b8) / (b3 + b8 +1e-8) #NDWI with avoiding div 0
     coordinates_NDWI = np.where(NDWI > 0)#where water (used to be 0)
@@ -136,6 +126,7 @@ def get_water_pix_coord(img,correction, if_SR):
     coordinate_list_NDWI = list(zip(ndwir,ndwic)) 
     del b8,NDWI, coordinates_NDWI,ndwir, ndwic
     gc.collect()
+    
     NDSI = (b3 - b11) / (b3 + b11 +1e-8) #NDSI with avoiding div 0
     coordinates_NDSI = np.where(NDSI < .42)#where not snow
     ndsir, ndsic = coordinates_NDSI
@@ -143,11 +134,17 @@ def get_water_pix_coord(img,correction, if_SR):
     del b3,b11,NDSI,coordinates_NDSI,ndsir,ndsic
     gc.collect()
     
+    coordinates_cloud = np.where(np.invert(img_cloud))
+    cloudr, cloudc = coordinates_cloud
+    coordinate_list_cloud = list(zip(cloudr, cloudc))#where not glint
+    del cloudr, cloudc,coordinates_cloud  
+    gc.collect()
+    
     # L1C
     if if_SR == False:
         ND_coordinates = np.column_stack(np.where(np.all((img > correction) & (img < 30000), axis=-1)))#where not no data (in any band)
         ND_coordinates_list = list(map(tuple, ND_coordinates))
-        common_coordinates_set = set(glint_coordinates_list) & set(ND_coordinates_list)& set(coordinate_list_NDWI)& set(coordinate_list_NDSI)
+        common_coordinates_set = set(glint_coordinates_list) & set(ND_coordinates_list)& set(coordinate_list_NDWI)& set(coordinate_list_NDSI)& set(coordinate_list_cloud)
         common_coordinates_list = list(common_coordinates_set)  # Convert set to list
         del ND_coordinates,ND_coordinates_list,common_coordinates_set,glint_coordinates_list
     
@@ -157,7 +154,7 @@ def get_water_pix_coord(img,correction, if_SR):
         ND_coordinates_list = list(map(tuple, ND_coordinates))
         Acolite_pix=np.column_stack(np.where(np.all((img <= 3000), axis=-1)))#threshold from ACOLITE
         Acolite_pix_list = list(map(tuple, Acolite_pix))
-        common_coordinates_set = set(glint_coordinates_list)&set(Acolite_pix_list)&set(ND_coordinates_list)&set(coordinate_list_NDWI)
+        common_coordinates_set = set(glint_coordinates_list)&set(Acolite_pix_list)&set(ND_coordinates_list)&set(coordinate_list_NDWI)& set(coordinate_list_cloud)
         common_coordinates_list = list(common_coordinates_set)
         del common_coordinates_set,Acolite_pix,Acolite_pix_list,ND_coordinates,ND_coordinates_list,glint_coordinates_list
     gc.collect()
@@ -415,11 +412,11 @@ def plot_RGB_img(RGB_img, image_path):
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(1, 3, figsize=(10, 10), sharex=True, sharey=True)
     ax[0].imshow(RGB_img[:,:,0])#plotting to see what OSW/ODW looks like
-    ax[0].set_title('Prediction Image')
+    ax[0].set_title('Prediction based on 0.5 threshold')
     ax[1].imshow(RGB_img[:,:,1])
-    ax[1].set_title('Prediction Probability Image')
+    ax[1].set_title('Prediction probability')
     ax[2].imshow(RGB_img[:,:,2])
-    ax[2].set_title('Masked Image')
+    ax[2].set_title('Non-water mask')
     # plt.show()
     
     out_path = image_path.replace('.tif','.png')
