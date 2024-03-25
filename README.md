@@ -37,12 +37,6 @@ pip3 install tensorflow==2.13.0
 
 ```
 
-In case of compatibility issues, please try the newest version of tensorflow: 
-
-```bash
-pip3 install --upgrade --force-reinstall tensorflow
-
-```
 
 
 For Linux and more on installing tensorflow: [https://www.tensorflow.org/install](https://www.tensorflow.org/install)
@@ -94,6 +88,12 @@ The L1C file is always required as it contains a built-in cloud mask. Pixels wit
 Output is a 1-band geotiff, with values of prediction probability of OSW (100 means most likely OSW, 0 means most likely ODW). Non-water pixels are masked. It is recommended to use pixels between 0 and 40 as ODW, and pixels between 60 and 100 as OSW (publication in review).
 
 A log file, an intermediate multi-band geotiff, and a preview PNG are also generated in the output folder. They can be deleted after the processing. 
+
+Sentinel-2 scene and sample output: 
+
+<img src="images/TOA.jpeg"  height="500">
+
+<img src="images/OSW.jpeg"  height="500">
 
 ## Training, test, and validation data 
 
