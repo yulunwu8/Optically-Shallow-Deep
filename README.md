@@ -89,7 +89,7 @@ Output is a 1-band geotiff, with values of prediction probability of OSW (100 me
 
 A log file, an intermediate multi-band geotiff, and a preview PNG are also generated in the output folder. They can be deleted after the processing. 
 
-Sentinel-2 scene and sample output: 
+**Sample Sentinel-2 scene and output:**
 
 <img src="images/TOA.jpeg"  height="500">
 
