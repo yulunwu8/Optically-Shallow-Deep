@@ -82,7 +82,7 @@ osd.run(file_L1C, folder_out, file_L2R=file_L2R)
 The L1C file is always required as it contains a built-in cloud mask. Pixels within 8 pixels of the cloud mask are masked to reduce the impact of clouds. 
 
 
-Output is a 1-band geotiff, with values of prediction probability of OSW (100 means most likely OSW, 0 means most likely ODW). Non-water pixels are masked. It is recommended to treat pixels between 0 and 40 as ODW, and pixels between 60 and 100 as OSW (publication in review).
+Output is a 1-band geotiff, with values of prediction probability of optically shallow water (OSW): 100 means most likely OSW, 0 means most likely optically deep water (ODW). Non-water pixels are masked. It is recommended to treat pixels between 0 and 40 as ODW, and pixels between 60 and 100 as OSW (publication in review).
 
 A log file, an intermediate multi-band geotiff, and a preview PNG are also generated in the output folder. They can be deleted after the processing. 
 
