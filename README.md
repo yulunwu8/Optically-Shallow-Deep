@@ -76,7 +76,7 @@ file_L2R = 'test_folder_in/L2R.nc'
 folder_out = 'folder/test_folder_out'
 
 # Run the OSW/ODW classifier 
-osd.run(file_in, folder_out, file_L2R=file_L2R)
+osd.run(file_L1C, folder_out, file_L2R=file_L2R)
 ```
 
 The L1C file is always required as it contains a built-in cloud mask. Pixels within 8 pixels of the cloud mask are masked to reduce the impact of clouds. 
