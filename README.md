@@ -86,6 +86,8 @@ Output is a 1-band geotiff, with values of prediction probability of optically s
 
 A log file, an intermediate multi-band geotiff, and a preview PNG are also generated in the output folder. They can be deleted after the processing. 
 
+Known issue (Mar 30, 2024): when ACOLITE L2R is used as input on Windows, small areas of ODW pixels may be misidentified as OSW. We are actively working on this.
+
 **Sample Sentinel-2 scene and output:**
 
 <img src="images/TOA.jpeg"  height="500">
