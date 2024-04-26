@@ -179,13 +179,15 @@ def process_image_with_filters(img, selected_columns):
     for band, kernel_size, filter_type in filter_list:
         
         if filter_type is None:
-            filtered_band = img[:, :, band].astype(np.uint16)#this means it is a single pixel
+            filtered_band = img[:, :, band]
         else:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", category=RuntimeWarning)
                 filtered_band = apply_filter(img[:, :, band].astype(np.float32), kernel_size, filter_type)
                 filtered_band[filtered_band==-32768] = 32768
-                filtered_band = filtered_band.astype(np.uint16)
+            
+        filtered_band[filtered_band<0] = 0
+        filtered_band = filtered_band.astype(np.uint16)#this means it is a single pixel
             
         output_bands.append(filtered_band)#append to list of filters
         del filtered_band

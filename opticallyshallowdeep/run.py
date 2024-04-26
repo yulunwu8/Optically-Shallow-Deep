@@ -35,7 +35,7 @@ def run(file_L1C, folder_out, file_L2R = None, to_log=True):
         if file_L2R is None: 
             log_base = os.path.basename(file_L1C).replace('.safe','.txt').replace('.SAFE','.txt')
         else:
-            log_base = os.path.basename(file_L1C).replace('.nc','.txt')
+            log_base = os.path.basename(file_L2R).replace('.nc','.txt')
         
         log_base = 'OSD_log_'+ log_base
         log_file = os.path.join(folder_out,log_base)

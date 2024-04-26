@@ -7,3 +7,5 @@
 .gitattributes
 
 
+tests/osd_test_private.py
+tests/debug_patches.py
