@@ -29,14 +29,14 @@ python -m pip install tensorflow-macos
 ```
 
 
-For windows:
+For Windows and Linux:
 
 ```bash
 pip3 install tensorflow==2.13.0
 ```
 
 
-For Linux and more on installing tensorflow: [https://www.tensorflow.org/install](https://www.tensorflow.org/install)
+More on installing tensorflow: [https://www.tensorflow.org/install](https://www.tensorflow.org/install)
 
 
 **3 - Install opticallyshallowdeep:**
