@@ -6,7 +6,7 @@ Supported input includes Level-1C (L1C) SAFE files and ACOLITE-processed L2R net
 
 **Home page:** <a href="https://github.com/yulunwu8/Optically-Shallow-Deep" target="_blank">https://github.com/yulunwu8/Optically-Shallow-Deep</a>
 
-**Publication:** Richardson, G., Foreman, N., Knudby, A., Wu, Y., & Lin, Y. (2024). Global deep learning model for delineation of optically shallow and optically deep water in Sentinel-2 imagery. Remote Sensing of Environment, 311, 114302. <a href="https://doi.org/10.1016/j.rse.2024.114302" target="_blank">https://doi.org/10.1016/j.rse.2024.114302</a>
+**Publication:** Richardson, G., Foreman, N., Knudby, A., Wu, Y., & Lin, Y. (2024). Global deep learning model for delineation of optically shallow and optically deep water in Sentinel-2 imagery. *Remote Sensing of Environment*, 311, 114302. <a href="https://doi.org/10.1016/j.rse.2024.114302" target="_blank">https://doi.org/10.1016/j.rse.2024.114302</a>
 
 Originally coded by by Galen Richardson and Anders Knudby, modified and packaged by Yulun Wu
 
