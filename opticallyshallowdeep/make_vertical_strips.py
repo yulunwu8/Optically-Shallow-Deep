@@ -1,8 +1,4 @@
-
-
 import numpy as np
-
-
 def make_vertical_strips(full_img):
     '''use to save ram, process bigger images faster, and it overlaps so middle image is not 
     distorted from how edge pixels are handled'''
@@ -31,4 +27,3 @@ def make_vertical_strips(full_img):
         sys.exit('Unknown dimension(s) of input imagery to be splited into strips')
           
     return [strip1,strip2,strip3,strip4,strip5]
-

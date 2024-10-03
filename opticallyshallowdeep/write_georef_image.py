@@ -1,4 +1,3 @@
-
 import rasterio, gc
 import numpy as np
 
@@ -24,4 +23,3 @@ def write_georef_image(image_path,RGB_img):
         
     del raster_with_ref
     gc.collect()
-    

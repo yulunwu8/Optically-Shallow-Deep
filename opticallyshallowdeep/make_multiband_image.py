@@ -54,5 +54,3 @@ def make_multiband_image(file_in,folder_out):
         print('Done')
 
     return imageFile
-
-

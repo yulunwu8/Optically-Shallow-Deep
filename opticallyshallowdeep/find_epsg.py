@@ -1,5 +1,3 @@
-
-
 def find_epsg(data):
     
     # Use regex to extract the desired part
@@ -29,25 +27,8 @@ def find_epsg(data):
             # return f"The EPSG code for '{crs_name}' is {epsg_code}."
             return epsg_code
         
-        
         else:
             print( "EPSG code could not be found.")
         
-        
     except Exception as e:
         return f"An error occurred: {str(e)}"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

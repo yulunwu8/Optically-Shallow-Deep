@@ -1,6 +1,4 @@
-
 import re
-
 def parse_string(s):
     if s.lower() in ["lat", "long", "lat_abs"]:
         return [s.lower()]#parses the column names for our model and makes into things that our scripts can interpret

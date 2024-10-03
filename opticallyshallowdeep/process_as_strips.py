@@ -1,4 +1,3 @@
-
 import os, gc, warnings, math
 import numpy as np
 import pandas as pd
@@ -19,7 +18,6 @@ from tensorflow.keras.models import Model,load_model
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 from .make_vertical_strips import make_vertical_strips
-
 
 def process_as_strips (full_img, image_path, if_SR, model_path, selected_columns, model_columns, file_in, cloud_list):
     striplist=make_vertical_strips(full_img) #create a list of strips with overlap
@@ -57,9 +55,7 @@ def process_img_to_rgb(img, file_path, if_SR, model_path, selected_columns, mode
         gc.collect()
         return RGB_img #this image is 0: OSW/ODW, 1:pred/prob, 2: Mask
 
-
 def correct_baseline(img,file_path, if_SR, file_in):
-    
     from xml.dom import minidom
     
     # if ACOLITE input 
@@ -160,7 +156,6 @@ def get_water_pix_coord(img,correction, if_SR, img_cloud):
     gc.collect()
     return common_coordinates_list
 
-
 def make_blank_img(img):
     Y_b, X_b, b = img.shape #sometimes the image is all no data or the correction value, in this instance, we make a blank image
     RGB_img = np.zeros((Y_b, X_b, 3), dtype=np.uint8)
@@ -170,7 +165,6 @@ def make_blank_img(img):
 
 def time_tracker(start_time):
     return "{}sec".format(round((datetime.now() - start_time).total_seconds(), 2))
-
 
 def process_image_with_filters(img, selected_columns):
     height, width, bands = img.shape#the output of this is an image of the filters required for this model
@@ -353,7 +347,6 @@ def load_model_and_predict_pixels(value_list, model_path, cord_list, if_SR):
 
     return cord_list.tolist(), pred_results.tolist(), con_1.tolist()
 
-
 def load_tf_model(model_path, if_SR):
     if if_SR == False:
         model=d6_model(32,0.01)
@@ -423,15 +416,3 @@ def plot_RGB_img(RGB_img, image_path):
     
     out_path = image_path.replace('.tif','.png')
     plt.savefig(out_path)
-
-
-
-
-
-
-
-
-
-
-
-

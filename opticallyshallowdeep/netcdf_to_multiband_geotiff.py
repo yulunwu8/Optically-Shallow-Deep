@@ -1,4 +1,3 @@
-    
 import os
 import numpy as np
 import rasterio
@@ -7,9 +6,7 @@ from rasterio.crs import CRS
 from rasterio.transform import from_origin
 import netCDF4 as nc4
 # from pyproj import Proj, transform
-
 import pyproj
-
 from .find_epsg import find_epsg
 
 def netcdf_to_multiband_geotiff(netcdf_file, folder_out):
@@ -88,4 +85,3 @@ def netcdf_to_multiband_geotiff(netcdf_file, folder_out):
         print('Done')
     
     return output_geotiff_file
-    

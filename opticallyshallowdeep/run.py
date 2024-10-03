@@ -1,4 +1,3 @@
-
 import sys, os, gc, time
 import tifffile as tif
 from importlib.metadata import version
@@ -13,9 +12,6 @@ from .write_georef_image import write_georef_image
 from .netcdf_to_multiband_geotiff import netcdf_to_multiband_geotiff
 from .make_vertical_strips import make_vertical_strips
 from .cloud_mask import cloud_mask
-
-
-
 
 def run(file_L1C, folder_out, file_L2R = None, to_log=True):
     

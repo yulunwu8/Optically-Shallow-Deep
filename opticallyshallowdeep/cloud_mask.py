@@ -1,7 +1,3 @@
-
-
-
-
 import os, sys
 import rasterio
 import numpy as np
@@ -100,4 +96,3 @@ def cloud_mask(file_L1C, buffer_size = 8):
     
     print('Done')
     return mask_cloud_buffered
-
