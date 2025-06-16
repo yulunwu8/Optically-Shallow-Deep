@@ -8,7 +8,9 @@ Supported input includes Level-1C (L1C) SAFE files and ACOLITE-processed L2R net
 
 **Publication:** Richardson, G., Foreman, N., Knudby, A., Wu, Y., & Lin, Y. (2024). Global deep learning model for delineation of optically shallow and optically deep water in Sentinel-2 imagery. *Remote Sensing of Environment*, 311, 114302. <a href="https://doi.org/10.1016/j.rse.2024.114302" target="_blank">https://doi.org/10.1016/j.rse.2024.114302</a>
 
-Originally coded by by Galen Richardson and Anders Knudby, modified and packaged by Yulun Wu
+Originally coded by G. Richardson and A. Knudby, modified and packaged by Y. Wu
+
+Models trained by G. Richardson and N. Foreman
 
  
 ## Installation 
@@ -93,6 +95,12 @@ A log file, an intermediate multi-band geotiff, and a preview PNG are also gener
 <img src="images/TOA.jpeg"  height="500">
 
 <img src="images/OSW.jpeg"  height="500">
+
+
+## Tips 
+
+Users have reported that averaging results from multiple images acquired on different days can help reduce noise and improve the overall accuracy of classification results.
+
 
 ## Training, test, and validation data 
 
