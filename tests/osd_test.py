@@ -1,4 +1,4 @@
-# Go up by 2 directory and import 
+# Go up by 2 directories and import 
 
 import sys
 import os.path as path
