@@ -70,7 +70,7 @@ def run(file_L1C, folder_out, file_L2R = None, to_log=True):
     if file_L2R is None: 
         
         if_SR = False
-        model = 'models/TOA.h5'
+        model = os.path.join('models', 'TOA.h5')
         model_columns = GTOA_model_columns
         file_in = file_L1C
         
@@ -84,7 +84,7 @@ def run(file_L1C, folder_out, file_L2R = None, to_log=True):
             sys.exit('file_L2R does not exist: ' + str(file_L2R))
         
         if_SR = True
-        model = 'models/SR.h5'
+        model = os.path.join('models', 'SR.h5')
         model_columns = GACOLITE_model_columns
         file_in = file_L2R
         

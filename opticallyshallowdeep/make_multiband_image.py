@@ -10,7 +10,7 @@ def make_multiband_image(file_in,folder_out):
     basename = os.path.basename(file_in).rstrip(".SAFE")
     
     # output path
-    imageFile = os.path.join(folder_out,basename) + '.tif'
+    imageFile = os.path.join(folder_out, f"{basename}.tif")
     
     if os.path.exists(imageFile):
         print('Multi-band geotiff exists: ' + str(imageFile))
